@@ -19,5 +19,5 @@ training_data = data[indices, :]
 
 test_data = np.delete(data, indices, 0)
 
-np.savetxt('test_data.txt', test_data, fmt='%s')
-np.savetxt('training_data.txt', training_data, fmt='%s')
+np.savetxt('test.txt', test_data, fmt='%s')
+np.savetxt('train.txt', training_data, fmt='%s')
