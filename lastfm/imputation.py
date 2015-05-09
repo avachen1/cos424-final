@@ -74,7 +74,7 @@ print "artist_count:", artist_count
 
 # fill in matrix (user_count x artist_count) with frequencies
 
-matrix = np.zeros([user_count, artist_count])
+matrix = np.zeros([user_count, artist_count],dtype=np.int)
 matrix_heldout = np.zeros([user_count, artist_count])
 for i in range(len(users_1k)):
 	if (artists_1k[i] in artists):
@@ -82,7 +82,7 @@ for i in range(len(users_1k)):
 		if (x == 0):
 			matrix_heldout[users[users_1k[i]]][artists[artists_1k[i]]] = freqs_1k[i]		
 		else:
-			matrix[users[users_1k[i]]][artists[artists_1k[i]]] = freqs_1k[i]
+			matrix[users[users_1k[i]]][artists[artists_1k[i]]] = int(freqs_1k[i])
 
 print "matrix created"
 
@@ -119,12 +119,14 @@ for i in range(new_matrix_heldout.shape[0]):
 print count
 print len(heldout_users)
 
-heldout_triples = np.zeros([count,3])
+heldout_triples = np.zeros([count,3],dtype=np.int)
 
 for i in range(count):
-	heldout_triples[i,0] = heldout_users[i]
-	heldout_triples[i,1] = heldout_artists[i]
-	heldout_triples[i,2] = heldout_freqs[i]
+	heldout_triples[i,0] = int(heldout_users[i])
+	heldout_triples[i,1] = int(heldout_artists[i])
+	heldout_triples[i,2] = int(heldout_freqs[i])
+
+print heldout_triples[5]
 
 print heldout_triples.shape
 
@@ -144,13 +146,13 @@ for i in range(new_matrix.shape[0]):
 
 print count
 
-zero_triples = np.zeros([count,3])
+zero_triples = np.zeros([count,3],dtype=np.int)
 
 print zero_triples.shape
 for i in range(count):
-	zero_triples[i,0] = zero_users[i]
-	zero_triples[i,1] = zero_artists[i]
-	zero_triples[i,2] = 0
+	zero_triples[i,0] = int(zero_users[i])
+	zero_triples[i,1] = int(zero_artists[i])
+	zero_triples[i,2] = int(0)
 
 im_test = np.concatenate((heldout_triples, zero_triples))
 
