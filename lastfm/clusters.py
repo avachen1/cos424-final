@@ -1,7 +1,8 @@
 import numpy as np
 import csv
 import operator
-from random import randint
+from sklearn import mixture
+from sklearn import cluster
 
 total_users = []
 total_artists = []
@@ -74,15 +75,10 @@ print "artist_count:", artist_count
 
 # fill in matrix (user_count x artist_count) with frequencies
 
-matrix = np.zeros([user_count, artist_count],dtype=np.int)
-matrix_heldout = np.zeros([user_count, artist_count])
+matrix = np.zeros([user_count, artist_count])
 for i in range(len(users_1k)):
 	if (artists_1k[i] in artists):
-		x = randint(0,9)
-		if (x == 0):
-			matrix_heldout[users[users_1k[i]]][artists[artists_1k[i]]] = freqs_1k[i]		
-		else:
-			matrix[users[users_1k[i]]][artists[artists_1k[i]]] = int(freqs_1k[i])
+		matrix[users[users_1k[i]]][artists[artists_1k[i]]] = freqs_1k[i]
 
 print "matrix created"
 
@@ -100,66 +96,63 @@ for i in range(user_count):
 		delete.append(i)
 
 new_matrix = np.delete(matrix,delete,0)
-new_matrix_heldout = np.delete(matrix_heldout,delete,0)
 
-heldout_users = []
-heldout_artists = []
-heldout_freqs = []
+print "pruned matrix created"
 
-count = 0
+g = mixture.GMM(n_components = 10)
+g.fit(new_matrix)
 
-for i in range(new_matrix_heldout.shape[0]):
-	for j in range(new_matrix_heldout.shape[1]):
-		if (new_matrix_heldout[i,j] != 0):
-			count += 1
-			heldout_users.append(i)
-			heldout_artists.append(j)
-			heldout_freqs.append(new_matrix_heldout[i,j])
+print "gmm fit"
 
-print count
-print len(heldout_users)
+print ""
 
-heldout_triples = np.zeros([count,3],dtype=np.int)
+means = g.means_
+weights = g.weights_
+comp_row = np.zeros([means.shape[1],2])
+for i in range(0,means.shape[0]):
+	print weights[i]
+	for j in range(0,means.shape[1]):
+		comp_row[j][0] = means[i][j]
+		comp_row[j][1] = j
+	sorted_row = np.lexsort((comp_row[:,1],comp_row[:,0]))
+	sorted_values = np.sort(comp_row[:,0])
+	reversed_sorted = sorted_values[::-1]
+	for j in range(10):
+		for key in artists:
+			if (artists.get(key) == sorted_row[j]):
+				print key,
+				print reversed_sorted[j]
+	print ""
 
-for i in range(count):
-	heldout_triples[i,0] = int(heldout_users[i])
-	heldout_triples[i,1] = int(heldout_artists[i])
-	heldout_triples[i,2] = int(heldout_freqs[i])
 
-print heldout_triples[5]
+km = cluster.KMeans(n_clusters = 10)
+km.fit(new_matrix)
 
-print heldout_triples.shape
+print "kmeans fit"
 
-print new_matrix.shape
+print ""
 
-zero_users = []
-zero_artists = []
-count = 0
-for i in range(new_matrix.shape[0]):
-	for j in range(new_matrix.shape[1]):
-		x = randint(0,300)
-		if (x == 0):
-			if ((new_matrix[i,j] == 0) and (new_matrix_heldout[i,j] == 0)):
-				count += 1
-				zero_users.append(i)
-				zero_artists.append(j)
+centers = km.cluster_centers_
+comp_row = np.zeros([centers.shape[1],2])
+for i in range(0,centers.shape[0]):
+	for j in range(0,centers.shape[1]):
+		comp_row[j][0] = centers[i][j]
+		comp_row[j][1] = j
+	sorted_row = np.lexsort((comp_row[:,1],comp_row[:,0]))
+	sorted_values = np.sort(comp_row[:,0])
+	reversed_sorted = sorted_values[::-1]
+	for j in range(10):
+		for key in artists:
+			if (artists.get(key) == sorted_row[j]):
+				print key,
+				print reversed_sorted[j]
+	print ""
 
-print count
 
-zero_triples = np.zeros([count,3],dtype=np.int)
 
-print zero_triples.shape
-for i in range(count):
-	zero_triples[i,0] = int(zero_users[i])
-	zero_triples[i,1] = int(zero_artists[i])
-	zero_triples[i,2] = int(0)
 
-im_test = np.concatenate((heldout_triples, zero_triples))
 
-print im_test.shape
 
-np.savetxt('imputation_train.txt', new_matrix, fmt='%s')
-np.savetxt('imputation_test.txt', im_test, fmt='%s')
 
 
 
