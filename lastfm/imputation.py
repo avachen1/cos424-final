@@ -121,7 +121,6 @@ print len(heldout_users)
 
 heldout_triples = np.zeros([count,3])
 
-print heldout_triples.shape
 for i in range(count):
 	heldout_triples[i,0] = heldout_users[i]
 	heldout_triples[i,1] = heldout_artists[i]
@@ -131,8 +130,34 @@ print heldout_triples.shape
 
 print new_matrix.shape
 
+zero_users = []
+zero_artists = []
+count = 0
+for i in range(new_matrix.shape[0]):
+	for j in range(new_matrix.shape[1]):
+		x = randint(0,300)
+		if (x == 0):
+			if ((new_matrix[i,j] == 0) and (new_matrix_heldout[i,j] == 0)):
+				count += 1
+				zero_users.append(i)
+				zero_artists.append(j)
+
+print count
+
+zero_triples = np.zeros([count,3])
+
+print zero_triples.shape
+for i in range(count):
+	zero_triples[i,0] = zero_users[i]
+	zero_triples[i,1] = zero_artists[i]
+	zero_triples[i,2] = 0
+
+im_test = np.concatenate((heldout_triples, zero_triples))
+
+print im_test.shape
+
 np.savetxt('imputation_train.txt', new_matrix, fmt='%s')
-np.savetxt('imputation_test.txt', heldout_triples, fmt='%s')
+np.savetxt('imputation_test.txt', im_test, fmt='%s')
 
 
 
