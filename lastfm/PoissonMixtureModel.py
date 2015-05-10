@@ -3,6 +3,62 @@ import scipy as sci
 import scipy.misc as scimisc
 from scipy.special import gammaln
 
+import csv
+import operator
+import sklearn.metrics
+
+total_users = []
+total_artists = []
+total_freqs = []
+f=open('./lastfm-dataset-360K/usersha1-artmbid-artname-plays.tsv')
+for i in range(500000):
+	line=f.next().split('\t')
+	total_users.append(line[0])
+	total_artists.append(line[2])
+	total_freqs.append(line[3])
+
+print "raw data loaded"
+
+users_1k = []
+artists_1k = []
+freqs_1k = []
+count = 0
+for i in range(len(total_users)):
+	users_1k.append(total_users[i])
+	artists_1k.append(total_artists[i])
+	freqs_1k.append(total_freqs[i])
+	if total_users[i] != total_users[i-1]:
+		count += 1
+	if count == 10000:
+		break
+
+print "created 1k data"
+
+# put users in dict: key=user, val=index
+
+users = {}
+user_count = 0
+
+for i in range(len(users_1k)):
+	if users_1k[i] not in users:
+		users[users_1k[i]] = user_count
+		user_count += 1
+
+print "user_count:", user_count
+
+# get top 1000 artists by number of users
+
+NUM_ARTISTS = 1000
+
+artists = {}
+
+for i in range(len(users_1k)):
+ 	if artists_1k[i] not in artists:
+ 		artists[artists_1k[i]] = 1
+ 	else:
+ 		artists[artists_1k[i]] += 1
+
+
 data = np.genfromtxt('/Users/nabeelsarwar/Documents/PrincetonJuniorSpring/COS424/HW/FinalProjectGit/cos424-final/lastfm/train.txt')
 
 NUM_VARIABLES = data.shape[1]
@@ -76,11 +132,6 @@ def updateMeans():
         clusterMean[i] = numerator/(multinomial[i] * data.shape[0])
         print 'Finished means for {0}:'.format(i)
 
-
-updateConditions()
-updateMultiNomial()
-updateMeans()
-
 for i in range(20):
     updateConditions()
     updateMultiNomial()
@@ -89,7 +140,9 @@ for i in range(20):
 #now we need to output the max conditional for each row
 whichGroupMax = np.zeros(data.shape[0])
 
+#cluster for eachad ta
 whichGroupMax = np.argmax(conditional, axis = 0)
+print whichGroupMax
 
 np.savetxt('clustersOfTrainData.txt', whichGroupMax, fmt='%s')
 
@@ -98,7 +151,28 @@ np.savetxt('clustersOfTrainData.txt', whichGroupMax, fmt='%s')
 clusterIndices = []
 for i in range(len(clusterMean)):
     clusterIndices.append(np.argsort(clusterMean[i])[-5:])
-    
 
 
+def getArtist(index):
+    for key in artists:
+        if (artist.get(key) == index):
+            return key
 
+
+clusterIndices = np.array(clusterIndices)
+
+artistsForEachCluster = []
+for i in range(clusterIndices.shape[0]):
+    cluster = []
+    for j in range(clusterIndices.shape[1]):
+        cluster.append(getArtist(clusterIndices[i, j]))
+    cluster = np.array(cluster)
+    artistsForEachCluster.append(cluster)
+
+artistsForEachCluster = np.array(artistsForEachCluster)
+
+np.savetxt('artistsFromPoissonMixtureModel.txt', artistsForEachCluster, fmt='%s')
+
+shadowscore = sklearn.metrics.silhouette_score(X, whichGroupMax)
+
+print 'Silhouette score: {0}:'.format(shadowscore)
