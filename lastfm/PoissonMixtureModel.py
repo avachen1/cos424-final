@@ -78,7 +78,7 @@ print multinomial
 for i in range(K):
     mean = np.zeros(NUM_VARIABLES)
     for j in range(NUM_VARIABLES):
-        mean[j] = np.random.randint(10, high=300)
+        mean[j] = np.random.randint(1, high=300)
     
     clusterMean.append(mean)
 
@@ -132,10 +132,15 @@ def updateMeans():
         clusterMean[i] = numerator/(multinomial[i] * data.shape[0])
         print 'Finished means for {0}:'.format(i)
 
-for i in range(20):
+counter = 0
+multinomialDifference = 1
+while counter < 10 and multinomialDifference > 0.1:
+    oldMulti = multinomial
     updateConditions()
     updateMultiNomial()
     updateMeans()
+    multinomialDifference = np.sum(np.abs(multinomial - oldMulti))
+    
 
 #now we need to output the max conditional for each row
 whichGroupMax = np.zeros(data.shape[0])
