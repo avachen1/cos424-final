@@ -93,9 +93,12 @@ whichGroupMax = np.argmax(conditional, axis = 0)
 
 np.savetxt('clustersOfTrainData.txt', whichGroupMax, fmt='%s')
 
+
 #what does each cluster have
-
-
-# need to predict what cluster an X belongs to
-def predict(X):
+clusterIndices = []
+for i in range(len(clusterMean)):
+    clusterIndices.append(np.argsort(clusterMean[i])[-5:])
     
+
+
+
