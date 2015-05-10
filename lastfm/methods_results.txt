@@ -1,0 +1,45 @@
+nmf20_binary_imputation
+precision recall AUC 0.81463407016
+adjusted rand score 0.00980940690659
+adjusted mutual info score 0.0142742846268
+homogeneity score 0.0142873505869
+completeness score 0.145372538312
+v-measure score 0.0260176608526
+kmeans20_binary_imputation
+precision recall AUC 0.775226993148
+adjusted rand score 0.00724795257957
+adjusted mutual info score 0.0101259357363
+homogeneity score 0.0101390597002
+completeness score 0.127707847031
+v-measure score 0.0187866019767
+gmm20_binary_imputation
+precision recall AUC 0.784671573512
+adjusted rand score 0.000468955660484
+adjusted mutual info score 0.000673852772676
+homogeneity score 0.000687293740932
+completeness score 0.0874127903135
+v-measure score 0.00136386393508
+
+nmf20_binary_split
+precision recall AUC 0.0355406174775
+adjusted rand score 0.0191570938791
+/anaconda/lib/python2.7/site-packages/sklearn/metrics/cluster/supervised.py:652: RuntimeWarning: invalid value encountered in log
+  emi = expected_mutual_information(contingency, n_samples)
+adjusted mutual info score nan
+homogeneity score 0.00233905129936
+completeness score 0.0125574239442
+v-measure score 0.00394354480682
+kmeans20_binary_split
+precision recall AUC 0.0398015428862
+adjusted rand score 0.0110611126271
+adjusted mutual info score 1.01583373829
+homogeneity score 0.00136486069027
+completeness score 0.0137053518306
+v-measure score 0.00248249929243
+gmm20_binary_split
+precision recall AUC 0.0407008729694
+adjusted rand score 0.002596560855
+adjusted mutual info score 1.01625660099
+homogeneity score 0.000359645085962
+completeness score 0.0173200736203
+v-measure score 0.000704658198416

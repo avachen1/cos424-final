@@ -1,6 +1,17 @@
-library(HTSCluster)
+library(flexmix)
+
 setwd('~/Documents/PrincetonJuniorSpring//COS424/HW/Final Project/')
 
-data <- as.matrix(read.table('train.txt'))
 
-model <- PoisMixClus(data, 5, 10)
+class <- FLXPmultinom()
+datatable <- read.table('train.txt')
+
+formula = as.formula(paste("y ~ ", paste(colnames(datatable), collapse= "+")))
+
+FLXMRglm(formula = formula , family='poisson')
+model <- flexmix(formula = formula, data = datatable, k = 20, model = FLXMRglm(formula = formula, family='poisson'), )
+
+
+class <- FLXPmultinom(~ AGE + ACADMOS + MINORDRG + LOGSPEND)
+
+
